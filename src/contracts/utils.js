@@ -6,7 +6,7 @@ const MUMBAI_RPC_URL =
 const MUMBAI_WSS_URL =
   "wss://polygon-mumbai.g.alchemy.com/v2/N-3v7WGB2XXpdyKzI6j5u6iqhin-5fIH";
 
-const CONTRACT_ADDRESS = "";
+const CONTRACT_ADDRESS = "0x76d2825467b6653B7534bb8e253B12AE5C238cc7";
 
 const ANSWER = 0;
 const OFFER = 1;
@@ -70,7 +70,7 @@ export const initiateOfferTransaction = async (to, offerData, returnAnswerFuncti
 }
 
 // join: listen for offer, accept offer, create answer, send answer
-export const listenForOffer = async (setOfferFunction, createAnswerFromOfferFunction) => {
+export const listenForOffer = async (setOfferFunction) => {
     // accept offer
     // create answer
     // send answer
@@ -90,14 +90,16 @@ export const listenForOffer = async (setOfferFunction, createAnswerFromOfferFunc
          if (iceType === OFFER) {
             console.log(`Found offer from ${from}`, data);
             console.log(`Creating answer from offer`);
-            setOfferFunction({type: "offer", sdp: data});
-            const answerData = createAnswerFromOfferFunction(data);
-            console.log(`Answer created from offer`, answerData);
-            console.log(`Sending answer to ${from}`);
-            await sendIceRequest(from, ANSWER, answerData);
-            console.log(`Answer sent to ${from}`);
+            setOfferFunction(from, {type: "offer", sdp: data});
          } else {
             console.log(`Found answer from ${from}`, data);
          }
    });
+}
+
+export const initiateAnswerTransaction = async (to, answerData) => {
+  console.log(`Answer created from offer`, answerData);
+  console.log(`Sending answer to ${to}`);
+  await sendIceRequest(to, ANSWER, answerData);
+  console.log(`Answer sent to ${to}`);
 }

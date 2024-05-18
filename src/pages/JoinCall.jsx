@@ -1,11 +1,12 @@
 import { useRef, useState } from "react";
 import SimplePeer from "simple-peer/simplepeer.min.js";
-import { listenForOffer } from "../contracts/utils";
+import { initiateAnswerTransaction, listenForOffer } from "../contracts/utils";
 
 function JoinCall() {
 
     const peer1 = useRef(null)
     const offer = useRef(null)
+    const toAddress = useRef('')
     const [answer, setAnswer] = useState('')
 
     const joinCall = () => {
@@ -24,6 +25,8 @@ function JoinCall() {
         peer1.current.on('signal', data => {
             setAnswer(JSON.stringify(data))
             console.log('peer1 signal', data)
+
+            toAddress.current && initiateAnswerTransaction(toAddress.current, data.sdp);
         })
         peer1.current.on('connect', () => {
             console.log('peer1 connected')
@@ -48,7 +51,10 @@ function JoinCall() {
             console.log('peer0 closed')
         })
         // peer1.current.signal(offer.current)
-        listenForOffer(peer1.current.signal);
+        listenForOffer((to, offerData) => {
+            toAddress.current = to;
+            peer1.current.signal(offerData);
+        });
     }
 
     return (
