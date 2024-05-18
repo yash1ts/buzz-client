@@ -6,7 +6,7 @@ const MUMBAI_RPC_URL =
 const MUMBAI_WSS_URL =
   "wss://polygon-mumbai.g.alchemy.com/v2/N-3v7WGB2XXpdyKzI6j5u6iqhin-5fIH";
 
-const CONTRACT_ADDRESS = "0x76d2825467b6653B7534bb8e253B12AE5C238cc7";
+const CONTRACT_ADDRESS = "0xba10b1f82f6A8Abd413DF388C872B7Aa2CAb818E";
 
 const ANSWER = 0;
 const OFFER = 1;
@@ -41,11 +41,11 @@ const listenForAnswerFrom = async (address, returnAnswerFunction) => {
    const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, { provider });
    const filter = contract.filters.IceRequest(address, signer);
    console.log(`Listening for answer from ${address}`);
-   contract.once(filter, async (from, to, iceId, event) => {
-         console.log("IceRequest", from, to, iceId);
-         console.log("Event", event);
-         const iceData = await contract.getIceAtIndex(iceId)
-         console.log("IceRequest data", iceData);
+        contract.once(filter, async (from, to, iceId, event) => {
+        console.log("IceRequest", from, to, iceId);
+        console.log("Event", event);
+        console.log(from.args, from.log, from.log.args, from.log.topics);
+        const iceData = await contract.getIceAtIndex(from.logs.args[2])
          const [, iceType, data] = iceData;
          if (iceType === ANSWER) {
               // handle answer
@@ -84,7 +84,8 @@ export const listenForOffer = async (setOfferFunction) => {
    contract.once(filter, async (from, to, iceId, event) => {
          console.log("IceRequest", from, to, iceId);
          console.log("Event", event);
-         const iceData = await contract.getIceAtIndex(iceId)
+         console.log(from.args, from.log, from.log.args, from.log.topics);
+         const iceData = await contract.getIceAtIndex(from.logs.args[2])
          console.log("IceRequest data", iceData);
          const [, iceType, data] = iceData;
          if (iceType === OFFER) {
