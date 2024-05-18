@@ -44,8 +44,8 @@ const listenForAnswerFrom = async (address, returnAnswerFunction) => {
         contract.once(filter, async (from, to, iceId, event) => {
         console.log("IceRequest", from, to, iceId);
         console.log("Event", event);
-        console.log(from.args, from.log, from.log.args, from.log.topics);
-        const iceData = await contract.getIceAtIndex(from.logs.args[2])
+        console.log(from.args);
+         const iceData = await contract.getIceAtIndex(from.args[2].toString())
          const [, iceType, data] = iceData;
          if (iceType === ANSWER) {
               // handle answer
@@ -84,8 +84,8 @@ export const listenForOffer = async (setOfferFunction) => {
    contract.once(filter, async (from, to, iceId, event) => {
          console.log("IceRequest", from, to, iceId);
          console.log("Event", event);
-         console.log(from.args, from.log, from.log.args, from.log.topics);
-         const iceData = await contract.getIceAtIndex(from.logs.args[2])
+         console.log(from.args);
+         const iceData = await contract.getIceAtIndex(from.args[2].toString())
          console.log("IceRequest data", iceData);
          const [, iceType, data] = iceData;
          if (iceType === OFFER) {
