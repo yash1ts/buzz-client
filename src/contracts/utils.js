@@ -50,7 +50,7 @@ const listenForAnswerFrom = async (address, returnAnswerFunction) => {
          if (iceType === ANSWER) {
               // handle answer
               console.log(`Found answer from ${from}`, data);
-              returnAnswerFunction(data);
+              returnAnswerFunction({type: "answer", sdp: data});
          } else {
               // handle offer
                 console.log(`Found offer from ${from}`, data);
