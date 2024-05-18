@@ -2,8 +2,14 @@ import React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import SimplePeer from 'simple-peer/simplepeer.min.js'
+import { connectWithMetamaskAccount } from '../contracts/utils'
 
 function Home() {
+    const [address, setAddress] = useState("");
+
+    useEffect(() => {
+        connectWithMetamaskAccount().then(setAddress);
+    }, [])
 
     return (
         <>

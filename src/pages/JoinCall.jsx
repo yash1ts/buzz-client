@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import SimplePeer from "simple-peer/simplepeer.min.js";
+import { listenForOffer } from "../contracts/utils";
 
 function JoinCall() {
 
@@ -9,7 +10,7 @@ function JoinCall() {
 
     const joinCall = () => {
         navigator.mediaDevices.getUserMedia({
-            video: true,
+            video: false,
             audio: true
         }).then(connect).catch(() => { })
     }
@@ -46,18 +47,19 @@ function JoinCall() {
         peer1.current.on('close', () => {
             console.log('peer0 closed')
         })
-        peer1.current.signal(offer.current)
+        // peer1.current.signal(offer.current)
+        listenForOffer(peer1.current.signal);
     }
 
     return (
         <div className="flex flex-col gap-10">
             <video ></video>
-            <input type="text" placeholder="offer"
+            {/* <input type="text" placeholder="offer"
                 className="block w-full rounded-md py-1.5 pl-7 pr-20 ring-1 ring-inset ring-gray-300 text-center"
                 onChange={e => offer.current = e.target.value}
-            />
+            /> */}
             <button onClick={joinCall}>
-                Connect
+                Listen for offer
             </button>
         </div>
     );

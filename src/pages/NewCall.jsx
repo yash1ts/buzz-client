@@ -1,15 +1,17 @@
 import { useRef, useState } from "react"
 import SimplePeer from 'simple-peer/simplepeer.min.js'
+import { initiateOfferTransaction } from "../contracts/utils"
 
 function NewCall() {
     const answer = useRef(null)
     const [offer, setOffer] = useState('')
+    const [address, setAddress] = useState('')
     const peer0 = useRef(null)
 
     const startCall = () => {
         navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: true
+            video: false,
+            audio: true,
         }).then(sendRequest).catch((err) => { console.log(err) })
     }
 
@@ -34,6 +36,12 @@ function NewCall() {
         peer0.current.on('signal', data => {
             setOffer(JSON.stringify(data))
             console.log('peer0 signal', data)
+            // send offer to address
+            address && initiateOfferTransaction(
+                address,
+                data.sdp,
+                peer0.current.signal
+            ).then(setAddress);
         })
         peer0.current.on('connect', () => {
             console.log('peer0 connected')
@@ -57,16 +65,20 @@ function NewCall() {
     return (
         <div className="flex flex-col gap-10">
             <video></video>
-            <button onClick={startCall}>
-                Start call
+            <input type="text" placeholder="Send offer to"
+                className="block w-full rounded-md py-1.5 px-1 ring-1 ring-inset ring-gray-300 text-center"
+                onChange={e => setAddress(e.target.value)}
+            />
+            <button onClick={startCall} disabled={!address}>
+                Wait for answer
             </button>
-            <input type="text" placeholder="answer"
+            {/* <input type="text" placeholder="answer"
                 className="block w-full rounded-md py-1.5 pl-7 pr-20 ring-1 ring-inset ring-gray-300 text-center"
                 onChange={e => { answer.current = e.target.value }}
             />
             <button onClick={connect}>
                 Connect
-            </button>
+            </button> */}
         </div>
     );
 }

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "crypto": "^1.0.1",
+    "ethers": "^6.12.1",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",
     "randombytes": "^2.1.0",
