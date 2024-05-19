@@ -36,7 +36,8 @@ export const connectWithMetamaskAccount = async () => {
 
 const listenForAnswerFrom = async (address, returnAnswerFunction) => {
     const signer = await connectWithMetamaskAccount();
-    const provider = new ethers.BrowserProvider(window.ethereum);
+    // const provider = new ethers.BrowserProvider(window.ethereum);
+    const provider = new ethers.WebSocketProvider("wss://bsc-testnet-rpc.publicnode.com");
 
    const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, { provider });
    const filter = contract.filters.IceRequest(address, signer);
@@ -46,6 +47,7 @@ const listenForAnswerFrom = async (address, returnAnswerFunction) => {
         console.log("Event", event);
         console.log(from.args);
          const iceData = await contract.getIceAtIndex(from.args[2].toString())
+         console.log("ice data", iceData);
          const [, iceType, data] = iceData;
          if (iceType === ANSWER) {
               // handle answer
@@ -53,7 +55,7 @@ const listenForAnswerFrom = async (address, returnAnswerFunction) => {
               returnAnswerFunction({type: "answer", sdp: data});
          } else {
               // handle offer
-                console.log(`Found offer from ${from}`, data);
+                console.log(`Found offer from ${from.args[0]}`, data);
          }
    });
 }
@@ -76,7 +78,8 @@ export const listenForOffer = async (setOfferFunction) => {
     // send answer
 
     const signer = await connectWithMetamaskAccount();
-    const provider = new ethers.BrowserProvider(window.ethereum);
+    // const provider = new ethers.BrowserProvider(window.ethereum);
+    const provider = new ethers.WebSocketProvider("wss://bsc-testnet-rpc.publicnode.com");
 
    const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, { provider });
    const filter = contract.filters.IceRequest(null, signer);
@@ -93,7 +96,7 @@ export const listenForOffer = async (setOfferFunction) => {
             console.log(`Creating answer from offer`);
             setOfferFunction(from, {type: "offer", sdp: data});
          } else {
-            console.log(`Found answer from ${from}`, data);
+            console.log(`Found answer from ${from.args[0]}`, data);
          }
    });
 }
