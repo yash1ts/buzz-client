@@ -10,17 +10,13 @@ function JoinCall() {
     const [answer, setAnswer] = useState('')
 
     const joinCall = () => {
-        navigator.mediaDevices.getUserMedia({
-            video: false,
-            audio: true
-        }).then(connect).catch(() => { })
+        connect();
     }
 
-    const connect = (stream) => {
+    const connect = () => {
         peer1.current = new SimplePeer({
             initiator: false,
             trickle: false,
-            stream: stream
         })
         peer1.current.on('signal', data => {
             setAnswer(JSON.stringify(data))

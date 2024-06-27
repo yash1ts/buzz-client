@@ -9,17 +9,13 @@ function NewCall() {
     const peer0 = useRef(null)
 
     const startCall = () => {
-        navigator.mediaDevices.getUserMedia({
-            video: false,
-            audio: true,
-        }).then(sendRequest).catch((err) => { console.log(err) })
+        sendRequest();
     }
 
-    const sendRequest = (stream) => {
+    const sendRequest = () => {
         peer0.current = new SimplePeer({
             initiator: true,
             trickle: false,
-            stream: stream,
         })
         peer0.current.on('stream', stream => {
             // got remote video stream, now let's show it in a video tag
